@@ -2,8 +2,10 @@ use dotenvy::dotenv;
 use serenity::prelude::*;
 use std::env;
 
+mod config;
 mod features;
 mod handlers;
+mod utils;
 
 #[tokio::main]
 async fn main() {

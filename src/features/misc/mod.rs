@@ -1,23 +1,22 @@
-pub struct MiscFeature;
-
-use crate::features::{Feature, FeatureDescription};
+use crate::features::FeatureDescription;
 use serenity::{model::channel::Message, prelude::*};
 
-impl Feature for MiscFeature {
-    async fn on_message(&self, ctx: Context, msg: Message) {
-        if msg.content == "!ping" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, "Pong!").await {
-                println!("Error sending message: {why:?}");
-            }
-        }
-    }
-}
+pub mod avatar;
+
 pub fn get_description() -> FeatureDescription {
     FeatureDescription {
         name: "Misc".to_string(),
         description: "Miscellaneous commands".to_string(),
         aliases: vec!["misc".to_string()],
-        examples: vec!["!ping".to_string()],
-        subfeatures: vec![],
+        examples: vec!["!av".to_string()],
+        subfeatures: vec![avatar::get_description()],
     }
+}
+
+pub async fn on_message(ctx: Context, command: String, msg: Message) {
+    let ctx = ctx.clone();
+    let msg = msg.clone();
+    tokio::spawn(async move {
+        avatar::on_message(ctx, command, msg).await;
+    });
 }
